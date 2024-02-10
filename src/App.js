@@ -1,29 +1,59 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Textform from './components/Textform';
+import About from './components/About';
+import Alert from './components/Alert';
 
-let name = "Prakash"
 function App() {
+  const [mode, setMode] = useState('light');
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (message, type) => {
+    setAlert({
+      msg: message,
+      type: type,
+    });
+
+    setTimeout(() => {
+      setAlert(null);
+    }, 2000);
+  };
+
+  const toggleMode = () => {
+    if (mode === 'light') {
+      setMode('dark');
+      document.body.style.backgroundColor = '#121212';
+      showAlert('Dark mode is enabled', 'success');
+      document.title = 'TextTutils - DarkHome';
+    } else {
+      setMode('light');
+      document.body.style.backgroundColor = 'white';
+      showAlert('Light mode is enabled', 'success');
+      document.title = 'TextTutils - LightHome';
+    }
+  };
+
   return (
-    <>
-      <nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">TextTuteles</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-    </>
+    <Router>
+      <>
+        {/* <Navbar /> */}
+        <Navbar title="TextTutils" mode={mode} toggleMode={toggleMode} />
+        <Alert alert={alert} />
+        <div className="container my-3">
+          <Routes>
+            <Route
+              path="/about"
+              element={<About mode={mode}/>}
+            />
+            <Route
+              path="/"
+              element={<Textform showAlert={showAlert} heading="Enter the Text to Analyze" mode={mode} />}
+            />
+          </Routes>
+        </div>
+      </>
+    </Router>
   );
 }
 
